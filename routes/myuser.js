@@ -5,7 +5,7 @@ const checkUser = require('../middleware/checkuser');
 const { response } = require('express');
 module.exports = app => {
 
-   app.get('/myuser/showallusers', checkUser, (req, res) => {
+   app.get('/myuser/showallusers',  (req, res) => {
       const civilengineer = new CivilEngineer();
       civilengineer.fetchUsers()
          .then((succ) => {
@@ -27,9 +27,9 @@ module.exports = app => {
       }
    })
 
-   app.get('/myuser/checkuser', checkUser, (req, res) => {
+   app.get('/myuser/checkuser', (req, res) => {
+      const _id = 'RX28A8I1MA3SRLS4'
      // const _id = req.session.myuser._id;
-      const _id = req.session.myuser._id;
       const civilengineer = new CivilEngineer();
       const myuser = civilengineer.getUserByID(_id)
          .then((succ) => {

@@ -134,6 +134,7 @@ app.get('/azure', (req, res) => {
 require('./routes/test')(app);
 require('./routes/myuser')(app)
 require('./routes/company')(app)
+require('./routes/project')(app)
 
 
 

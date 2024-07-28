@@ -82,22 +82,21 @@ module.exports = app => {
             })
     })
 
-    app.get('/company/findmycompany', checkUser, (req, res) => {
-        const _id = req.session.myuser._id
+    app.get('/company/findmycompany', (req, res) => {
+        // const _id = req.session.myuser.
+        const _id = 'RX28A8I1MA3SRLS4';
         const civilengineer = new CivilEngineer();
         civilengineer.getUserByID(_id)
             .then((succ) => {
                 const myuser = succ.recordset[0];
-                console.log(myuser)
                 if (myuser.CompanyID) {
                     const companyid = myuser.CompanyID
-
                     civilengineer.fetchCompanyByID(companyid)
                         .then((succ_1) => {
 
 
 
-                            res.send({ myuser, company: succ_1 })
+                            res.send({ myuser, company:succ_1.company, allprojects:succ_1.allprojects })
 
 
 
@@ -213,7 +212,7 @@ module.exports = app => {
 
     })
 
-    app.get('/company/findallcompanys', checkUser, (req, res) => {
+    app.get('/company/findallcompanys',  (req, res) => {
 
         const civilengineer = new CivilEngineer();
 
@@ -229,6 +228,25 @@ module.exports = app => {
 
 
     })
+
+
+    app.get('/company/:companyid/showallprojects', (req,res) => {
+        const companyid = req.params.companyid;
+        const civilengineer = new CivilEngineer();
+        civilengineer.getProjectsByCompany(companyid)
+        .then(getprojects=> {
+           
+           res.send({allprojects:getprojects.recordset})
+         
+        })
+
+        .catch((err) => {
+            res.send({Error:` Could not find all project ${err}`})
+        })
+     
+
+    })
+
 
 
 }

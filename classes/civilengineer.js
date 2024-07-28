@@ -10,12 +10,12 @@ const companySchema = ({
     city: String,
     contactstate: String,
     zipcode: String,
-    url:String,
+    url: String,
     accounts: [{
         accountid: String,
         user_id: String,
         accountname: String,
-        stripe:String
+        stripe: String
     }],
     employees: [{
         user_id: String,
@@ -25,8 +25,8 @@ const companySchema = ({
             benefitid: String,
             benefit: String,
             amount: Number,
-            frequency:String,
-            accountid:String
+            frequency: String,
+            accountid: String
         }]
     }],
     materials: [{
@@ -43,16 +43,16 @@ const companySchema = ({
             equipment: String,
             accountid: String,
             rented: {
-                hourly:String,
-                daily:String,
-                weekly:String,
-                monthly:String
+                hourly: String,
+                daily: String,
+                weekly: String,
+                monthly: String
             },
             ownership: {
                 workinghours: Number,
                 purchasedate: String,
                 loaninterest: Number,
-                resalevalue:Number,
+                resalevalue: Number,
                 saledate: String,
                 salvage: Number,
                 purchase: Number,
@@ -61,8 +61,8 @@ const companySchema = ({
                     cost: Number,
                     detail: String,
                     timein: String,
-                    reoccurring:{
-                        frequency:String
+                    reoccurring: {
+                        frequency: String
                     }
                 }]
             }
@@ -74,9 +74,254 @@ const companySchema = ({
 
 const companys = mongoose.model("companys", companySchema);
 
+const projectSchema = ({
+    userid: String,
+    projectid: String,
+    title: String,
+    scope: String,
+    address: String,
+    city: String,
+    projectstate: String,
+    zipcode: String,
+    charges: [{
+        chargeid: String,
+        created: String,
+        amount: String,
+
+    }],
+    milestones: [{
+        milestoneid: String,
+        milestone: String,
+        start: String,
+        completion: String
+    }],
+    construction: [{
+        companyid: String,
+        schedule: {
+            proposals: [{
+                proposalid: String,
+                dateproposal: String,
+                updated: String,
+                approved: String,
+                bidschedule: [{
+                    csiid: String,
+                    unit: String,
+                    quantity: String
+
+                }]
+            }],
+            labor: [{
+                    laborid:String,
+                    userid:String,
+                    milestoneid:String,
+                    csiid:String,
+                    laborrate:Number,
+                    timein:String,
+                    timeout:String,
+                    profit:Number,
+                    proposalid:String
+                }],
+            materials:[{
+                materialid:String,
+                mymaterialid:String,
+                csiid:String,
+                milestoneid:String,
+                timein:String,
+                quantity:String,
+                unit:String,
+                unitcost:Number,
+                profit:Number,
+                proposalid:String
+
+
+            }],
+
+            equipment:[{
+                equipmentid:String,
+                myequipmentid:String,
+                csiid:String,
+                milestoneid:String,
+                timein:String,
+                timeout:String,
+                equipmentrate:Number,
+                profit:Number,
+                proposalid:String
+            }],
+            bidschedule:[{
+                csiid:String,
+                quantity:String,
+                unit:String
+
+
+            }]
+
+        } ,
+        actual: {
+            invoices: [{
+                invoiceid: String,
+                dateinvoice: String,
+                updated: String,
+                approved: String,
+                bid: [{
+                    csiid: String,
+                    unit: String,
+                    quantity: String
+
+                }
+                ]
+            }],
+            labor: [{
+
+                    laborid:String,
+                    userid:String,
+                    milestoneid:String,
+                    csiid:String,
+                    laborrate:Number,
+                    timein:String,
+                    timeout:String,
+                    profit:Number,
+                    invoiceid:String
+                }],
+            materials:[{
+                materialid:String,
+                mymaterialid:String,
+                csiid:String,
+                milestoneid:String,
+                timein:String,
+                quantity:String,
+                unit:String,
+                unitcost:Number,
+                profit:Number,
+                invoiceid:String
+            }],
+            equipment:[{
+                equipmentid:String,
+                myequipmentid:String,
+                csiid:String,
+                milestoneid:String,
+                timein:String,
+                timeout:String,
+                equipmentrate:Number,
+                profit:Number,
+                invoiceid:String
+            }],
+            bid:[{
+                csiid:String,
+                quantity:String,
+                unit:String
+            }]
+
+        } // end of actual// end of schedule
+
+
+    }],
+
+    design:[{
+        companyid:String,
+        costestimate:{
+            labor: [{
+
+                laborid:String,
+                userid:String,
+                milestoneid:String,
+                csiid:String,
+                laborrate:Number,
+                timein:String,
+                timeout:String,
+                profit:Number,
+                invoiceid:String
+            }],
+        materials:[{
+            materialid:String,
+            mymaterialid:String,
+            csiid:String,
+            milestoneid:String,
+            timein:String,
+            quantity:String,
+            unit:String,
+            unitcost:Number,
+            profit:Number,
+            invoiceid:String
+        }],
+        equipment:[{
+            equipmentid:String,
+            myequipmentid:String,
+            csiid:String,
+            milestoneid:String,
+            timein:String,
+            timeout:String,
+            equipmentrate:Number,
+            profit:Number,
+            invoiceid:String
+        }],
+        bid:[{
+            csiid:String,
+            quantity:String,
+            unit:String
+        }],
+
+        specifications:[{
+            csiid:String,
+            paragraph: {
+                listType:String,
+                list:[{
+                    contentid:String, // part 1 General
+                    content:String,
+                    sublist:{
+                       listType:String , 
+                       list:[{
+                        contentid:String, /// 1.01 Measure and Payment
+                        content:String,
+                        sublist:{
+                            listType:String ,
+                            list:[{
+                             contentid:String, // A. Lump Sum Price Offered in Schedule
+                             content:String,
+                             sublist:{
+                                listType:String ,
+                                list:[{
+                                        contentid:String, // 1. As determined in the field
+                                        content:String,
+                                        sublist:{
+                                                listType:String ,
+                                                list:[{
+                                                contentid:String, // a. otherwise noted
+                                                content:String, 
+                                                sublist:{
+                                                        listType:String ,
+                                                        list:[{
+                                                        contentid:String, // i
+                                                        content:String,                                                     
+                                     
+                                    }]
+                                 }
+                                     
+                                    }]
+                                 }
+                                 
+                                }]
+                             }
+                             
+                            }]
+                         }
+
+                       }]
+                    }
+                }]
+
+            }
+            
+
+        }]
+
+        }
+    }] // end of design
+    
+}) // end of project schema
+
 class CivilEngineer {
 
-   
+
 
     async fetchUsers() {
         try {
@@ -117,11 +362,11 @@ class CivilEngineer {
             const close = await this.closeMongoDB();
             return getcompany;
 
-        } catch(err) {
-            return ({Error: `Could not create company ${err} `})
+        } catch (err) {
+            return ({ Error: `Could not create company ${err} ` })
         }
-        
-       
+
+
     }
 
     async updateCompanyByID(company_id, company) {
@@ -136,7 +381,7 @@ class CivilEngineer {
             upsert: true,
             useFindAndModify: false
         }
-     
+
 
         try {
 
@@ -146,7 +391,7 @@ class CivilEngineer {
             return getcompany;
 
         } catch (err) {
-            return ({Error:`Could not update company ${err}`})
+            return ({ Error: `Could not update company ${err}` })
         }
 
 
@@ -161,36 +406,41 @@ class CivilEngineer {
             return getcompany;
 
 
-        } catch(err) {
-            return ({Error: `Could not remove Company ${err}`})
+        } catch (err) {
+            return ({ Error: `Could not remove Company ${err}` })
         }
-        
+
     }
 
-    async fetchCompanybyUserID (user_id) {
+    async fetchCompanybyUserID(user_id) {
         try {
 
-       
-       let myuser = await this.getUserByID(user_id)
-       const companyid = myuser.recordset[0].CompanyID;
-       const company = await this.fetchCompanyByID(companyid)
-       return company;
+            let myuser = await this.getUserByID(user_id)
+            const companyid = myuser.recordset[0].CompanyID;
+            const company = await this.fetchCompanyByID(companyid)
+           
+            return company;
 
-    } catch (err) {
-        console.log("fetch company", err)
-    }
+        } catch (err) {
+            console.log("fetch company", err)
+        }
 
     }
 
     async fetchCompanyByID(company_id) {
         try {
-           const db = await this.connectMongoDB();
+            let allprojects = {};
+            const db = await this.connectMongoDB();
             const getcompany = await companys.findById({ _id: company_id })
+            const result = await this.getProjectsByCompany.call(this,getcompany._id)
+            if(result.recordset.length>0) {
+                allprojects = result.recordset;
+            }
             const close = await this.closeMongoDB();
-            return getcompany;
+            return ({company:getcompany,allprojects});
 
         } catch (err) {
-            return(err)
+            return (err)
 
         }
     }
@@ -303,30 +553,30 @@ class CivilEngineer {
 
     async addUsertoCompany(companyid, user_id) {
         const newemployee = (user_id, title, workinghours) => {
-            return ({user_id, title,workinghours})
+            return ({ user_id, title, workinghours })
         }
 
         try {
-         
+
             const company = await this.fetchCompanyByID(companyid)
-           
-            if(company.employees) {
-                const employee = newemployee(user_id,"",0)
+
+            if (company.employees) {
+                const employee = newemployee(user_id, "", 0)
                 company.employees.push(employee)
-           
-             
-                const updatecompany = await this.updateCompanyByID(companyid,company)
+
+
+                const updatecompany = await this.updateCompanyByID(companyid, company)
                 const getcompany = await this.fetchCompanyByID(companyid);
-                return(getcompany)
-            
+                return (getcompany)
+
 
             } else {
                 console.log("employees not found")
             }
-     
 
-        } catch(err) {
-            return({Error:`Could not add user to company ${err}`})
+
+        } catch (err) {
+            return ({ Error: `Could not add user to company ${err}` })
         }
     }
 
@@ -371,6 +621,29 @@ class CivilEngineer {
 
     }
 
+    async getProjectsByCompany(companyid) {
+
+        try {
+
+            const dbConnect = await this.dbConnect();
+            const request = new sql.Request();
+            const mysql = `SELECT Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID
+FROM MyUsers INNER JOIN (Projects INNER JOIN MyTeam ON Projects._ID = MyTeam.ProjectID) ON MyUsers._ID = MyTeam.UserID
+GROUP BY Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID
+HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null))`
+           console.log(mysql)
+const results = await request.query(mysql)
+            const disconnect = await this.dbDisconnect();
+            return results;
+
+
+        } catch(err) {
+            console.log(`Error could not fetch projects ${err}`)
+        }
+
+
+    }
+
     async getUserByID(_id) {
         try {
             const dbConnect = await this.dbConnect();
@@ -401,7 +674,7 @@ class CivilEngineer {
                 }
 
             }
-           
+
             return userid;
 
         } catch (err) {
@@ -515,7 +788,7 @@ class CivilEngineer {
 
     }
 
-    
+
 }
 
 
