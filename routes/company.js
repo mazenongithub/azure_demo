@@ -10,11 +10,18 @@ const checkCompany = require('../middleware/checkcompanyjs')
 module.exports = app => {
 
     app.ws("/company/:companyID/websocketapi", checkCompany, function (ws, req, next) {
-        console.log("websocket running")
 
+        // req.session.myuser = {};
+        // req.session.myuser._id = 'RX28A8I1MA3SRLS4'
+        // req.session.myuser.userid = 'maison'
+        // req.session.myuser.companyid ='661d45d677fdcfa48c8e8ed1'
 
         // console.log("myuser", req.session.myuser)
-        const _id = req.session.myuser._id;
+        const user_id = req.session.myuser.userid;
+        const company_id = req.params.companyID;
+        const _id = req.session.myuser._id
+
+        
 
 
         try {
@@ -26,15 +33,16 @@ module.exports = app => {
 
             // register handlers for message-received, connection-closed
 
-            ws.on("message", function (data) {
+            ws.on("message", function (jsonData) {
                 try {
 
-                    //console.log("message", data)
+// console.log("message", jsonData)
 
                     // compare saved company to data
 
                     // save company
-                    user.handleMessage(data, _id);
+                    user.companyHandler(jsonData,_id, user_id, company_id)
+                   
 
                 } catch (err) {
                     console.error(err);
@@ -68,6 +76,7 @@ module.exports = app => {
                 const myuser = succ.recordset[0]
                 civilengineer.addUsertoCompany(companyid, userid)
                     .then((succ_1) => {
+                        req.session.myuser.companyid = companyid;
                         res.send({ myuser: succ.recordset[0], company: succ_1 })
 
                     })
@@ -82,21 +91,24 @@ module.exports = app => {
             })
     })
 
-    app.get('/company/findmycompany', (req, res) => {
-        // const _id = req.session.myuser.
-        const _id = 'RX28A8I1MA3SRLS4';
+    app.get('/company/findmycompany', checkUser, (req, res) => {
+        // req.session.myuser._id = 'RX28A8I1MA3SRLS4';
+        // const _id = req.session.myuser._id;
+        // req.session.myuser = {};
+        // req.session.myuser._id = 'RX28A8I1MA3SRLS4'
+        // req.session.myuser.userid = 'maison'
+        // req.session.myuser.companyid ='661d45d677fdcfa48c8e8ed1'
+      
+        const companyid = req.session.myuser.companyid;
+       
         const civilengineer = new CivilEngineer();
-        civilengineer.getUserByID(_id)
-            .then((succ) => {
-                const myuser = succ.recordset[0];
-                if (myuser.CompanyID) {
-                    const companyid = myuser.CompanyID
+     
                     civilengineer.fetchCompanyByID(companyid)
                         .then((succ_1) => {
 
 
 
-                            res.send({ myuser, company:succ_1.company, allprojects:succ_1.allprojects })
+                            res.send({ company:succ_1.company, allprojects:succ_1.allprojects })
 
 
 
@@ -106,15 +118,10 @@ module.exports = app => {
                             res.send({ Error: `Could not get company ${err_1}` })
                         })
 
-                } else {
-                    res.send({ Error: `No user company found` })
-                }
-            })
+              
+       
 
-            .catch((err) => {
-                let message = `Could not fetch user by ID ${err}`
-                res.json({ Error: message })
-            })
+         
 
     })
 
@@ -230,7 +237,7 @@ module.exports = app => {
     })
 
 
-    app.get('/company/:companyid/showallprojects', (req,res) => {
+    app.get('/company/:companyid/showallprojects', checkUser, (req,res) => {
         const companyid = req.params.companyid;
         const civilengineer = new CivilEngineer();
         civilengineer.getProjectsByCompany(companyid)

@@ -27,9 +27,12 @@ module.exports = app => {
       }
    })
 
-   app.get('/myuser/checkuser', (req, res) => {
-      const _id = 'RX28A8I1MA3SRLS4'
-     // const _id = req.session.myuser._id;
+   app.get('/myuser/checkuser', checkUser, (req, res) => {
+      // req.session.myuser = {};
+      // req.session.myuser._id = 'RX28A8I1MA3SRLS4'
+      // req.session.myuser.userid = 'maison'
+      // req.session.myuser.companyid ='661d45d677fdcfa48c8e8ed1'
+      const _id = req.session.myuser._id;
       const civilengineer = new CivilEngineer();
       const myuser = civilengineer.getUserByID(_id)
          .then((succ) => {
@@ -53,7 +56,7 @@ module.exports = app => {
 
             if (succ.hasOwnProperty("_ID")) {
 
-               req.session.myuser = { _id: succ._ID, userid:succ.UserID }
+               req.session.myuser = { _id: succ._ID, userid:succ.UserID, companyid:succ.CompanyID }
 
                res.send({ myuser: succ })
 

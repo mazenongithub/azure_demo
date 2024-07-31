@@ -57,13 +57,14 @@ class ChatUser {
      * @param text {string} message to send
      * */
 
-    async handleCompany(company, _id) {
+    async handleCompany(company, company_id) {
         const civilengineer = new CivilEngineer();
  
         try {
 
 
-            const companydb = await civilengineer.fetchCompanybyUserID(_id);
+            const getcompanydb = await civilengineer.fetchCompanyByID(company_id);
+            const companydb = getcompanydb.company;
             const compare = new CompareCompany(company, companydb)
             const response = compare.getResponse();
             civilengineer.updateCompanyByID(companydb._id, company)
@@ -73,7 +74,7 @@ class ChatUser {
                         name: this.name,
                         type: "company",
                         response,
-                        succ
+                        company:succ
                     });
 
 
@@ -133,12 +134,43 @@ class ChatUser {
      * </code>
      */
 
+   async companyHandler(jsonData, user_id, userid, company_id) {
+        const msg = JSON.parse(jsonData);
+        const civilengineer = new CivilEngineer();
+        if(msg.type === "join") {
+
+        const getcompany = await civilengineer.fetchCompanyByID(company_id)
+      
+        const company = getcompany.company;
+        this.name = user_id;
+        this.room.join(this);
+        this.room.broadcast({
+       
+            type: "join",
+            text: `${this.name} ${userid} joined "${this.room.name}".${getcompany.company.companyid}`,
+           
+        });
+
+    
+                   
+
+        } else if (msg.type==="company") {
+          const company = msg.company;
+            this.handleCompany(company, company_id)
+        
+        
+        }
+
+
+
+    }
+
     handleMessage(jsonData, _id) {
         let msg = JSON.parse(jsonData);
         let company = msg.company;
 
         if (msg.type === "join") this.handleJoin(msg.userid);
-        else if (msg.type === "company") this.handleCompany(company, _id);
+        else if (msg.type === "company") this.handleCompany(company, company_id);
         else if (msg.type === "chat") this.handleChat(msg);
         else if (msg.type === "get-joke") this.handleGetJoke();
         else if (msg.type === "get-members") this.handleGetMembers();
