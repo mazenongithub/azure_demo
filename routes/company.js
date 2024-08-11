@@ -21,13 +21,14 @@ module.exports = app => {
         const company_id = req.params.companyID;
         const _id = req.session.myuser._id
 
-        
+
 
 
         try {
             const user = new ChatUser(
                 ws.send.bind(ws), // fn to call to message this user
-                req.params.companyID // name of room for user
+                company_id,
+                company_id // name of room for user
             );
 
 
@@ -35,6 +36,7 @@ module.exports = app => {
 
             ws.on("message", function (jsonData) {
                 try {
+
 
 // console.log("message", jsonData)
 
@@ -188,7 +190,7 @@ module.exports = app => {
 
     })
 
-    app.get('/company/:companyid/removecompany', checkUser, (req, res) => {
+    app.get('/company/:companyid/removecompany', (req, res) => {
         const civilengineer = new CivilEngineer();
         const companyid = req.params.companyid;
         civilengineer.removeCompanyByID(companyid)
@@ -202,6 +204,98 @@ module.exports = app => {
 
 
     })
+
+    app.get('/company/:company_id/projects/:project_id/deleteproject', (req, res) => {
+        const civilengineer = new CivilEngineer();
+        const project_id = req.params.project_id;
+        civilengineer.deleteProjectByID(project_id)
+            .then(succ => {
+
+                res.send({ succ })
+            })
+
+            .catch(err => {
+                console.log(`Could not delete project ${err}`)
+            })
+    })
+
+
+    app.get('/company/:company_id/projects/findall', (req, res) => {
+        const civilengineer = new CivilEngineer();
+        civilengineer.findAllProjects()
+            .then(succ => {
+                res.send({ myprojects: succ })
+
+            })
+
+            .catch(err => {
+                console.log(`Could not show all projects  ${err}`)
+            })
+    })
+
+
+    app.get('/company/:company_id/projects/:project_id/createproject', (req, res) => {
+        const company_id = req.params.company_id;
+        const project_id = req.params.project_id;
+        const myproject = {
+            company_id,
+            project_id,
+            schedule :{
+                labor:[],
+                equipment:[],
+                materials:[],
+                bidschedule:[],
+                proposals:[]
+
+            },
+            actual:{
+                labor:[],
+                equipment:[],
+                materials:[],
+                bid:[],
+                invoices:[]
+
+            }
+        
+        }
+
+
+        const civilengineer = new CivilEngineer();
+        civilengineer.createProject(myproject)
+            .then(succ => {
+
+                res.send({ myproject: succ })
+
+            })
+
+            .catch(err => {
+                alert(`Could not create project ${err}`)
+            })
+
+
+
+    })
+
+
+
+    app.get('/company/:company_id/projects/:project_id/showall', (req, res) => {
+        const company_id = req.params.company_id;
+        const civilengineer = new CivilEngineer();
+        civilengineer.getProjectsByCompany(company_id)
+            .then(getprojects => {
+
+                res.end({ allprojects: getprojects.recordset })
+
+            })
+
+            .catch((err) => {
+                res.send({ Error: ` Could not find all project ${err}` })
+            })
+
+
+    })
+
+
 
 
     app.get('/company/:companyid/findcompany', checkUser, (req, res) => {
@@ -237,8 +331,9 @@ module.exports = app => {
     })
 
 
-    app.get('/company/:companyid/showallprojects', checkUser, (req,res) => {
+    app.get('/company/:companyid/showallprojects', (req,res) => {
         const companyid = req.params.companyid;
+       
         const civilengineer = new CivilEngineer();
         civilengineer.getProjectsByCompany(companyid)
         .then(getprojects=> {

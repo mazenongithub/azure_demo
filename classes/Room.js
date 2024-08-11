@@ -21,12 +21,12 @@ class Room {
      * @param roomName {string} room to get
      **/
 
-    static get(roomName) {
+    static get(roomName, company_id) {
         if (!rooms.has(roomName)) {
-            rooms.set(roomName, new Room(roomName));
+            rooms.set(roomName, new Room(roomName, company_id));
         }
 
-        return rooms.get(roomName);
+        return rooms.get(roomName, company_id);
     }
 
     /** Make a new room, starting with empty set of listeners.
@@ -34,9 +34,11 @@ class Room {
      * @param roomName {string} room name for new room
      * */
 
-    constructor(roomName) {
+    constructor(roomName, company_id) {
         this.name = roomName;
+        this.company_id = company_id;
         this.members = new Set();
+
     }
 
     /** Handle member joining a room.
@@ -62,13 +64,39 @@ class Room {
      * @param data {string} message to send
      * */
 
+
+
+
     broadcast(data) {
         // console.log("broadcast", data)
         for (let member of this.members) {
             // console.log("sending data", member)
+
+
             member.send(JSON.stringify(data));
         }
     }
+
+    broadcastCompany(data) {
+        // console.log("broadcast", data)
+        for (let member of this.members) {
+            // console.log("sending data", member)
+
+            if (data.myproject) {
+
+
+                if (data.myproject.company_id === this.company_id) {
+
+                    console.log("89", data.myproject.company_id, this.company_id)
+                    member.send(JSON.stringify(data));
+
+                }
+
+            }
+
+        }
+    }
+
 
     /** Return a Set containing all room members */
 

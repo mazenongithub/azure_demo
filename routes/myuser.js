@@ -54,10 +54,9 @@ module.exports = app => {
       civilengineer.loginUser(myuser)
          .then((succ) => {
 
-            if (succ.hasOwnProperty("_ID")) {
+            if (succ) {
 
                req.session.myuser = { _id: succ._ID, userid:succ.UserID, companyid:succ.CompanyID }
-
                res.send({ myuser: succ })
 
             } else if (myuser.userid && (myuser.apple || myuser.google)) {
@@ -84,12 +83,7 @@ module.exports = app => {
 
                      })
 
-               } else {
-
-                  res.send({ Error: `Could not login user` })
-
-               }
-
+               } 
             
          })
          .catch((err) => {

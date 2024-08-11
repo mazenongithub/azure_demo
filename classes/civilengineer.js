@@ -72,17 +72,130 @@ const companySchema = ({
 
 })
 
+
+
 const companys = mongoose.model("companys", companySchema);
 
+const constructionSchema  = ({ 
+    company_id: String,
+    project_id: String,
+    schedule: {
+        proposals: [{
+            proposalid: String,
+            dateproposal: String,
+            updated: String,
+            approved: String,
+            bidschedule: [{
+                csiid: String,
+                unit: String,
+                quantity: String
+
+            }]
+        }],
+        labor: [{
+            laborid: String,
+            userid: String,
+            milestoneid: String,
+            csiid: String,
+            laborrate: Number,
+            timein: String,
+            timeout: String,
+            profit: Number,
+            proposalid: String
+        }],
+        materials: [{
+            materialid: String,
+            mymaterialid: String,
+            csiid: String,
+            milestoneid: String,
+            timein: String,
+            quantity: String,
+            unit: String,
+            unitcost: Number,
+            profit: Number,
+            proposalid: String
+
+
+        }],
+
+        equipment: [{
+            equipmentid: String,
+            myequipmentid: String,
+            csiid: String,
+            milestoneid: String,
+            timein: String,
+            timeout: String,
+            equipmentrate: Number,
+            profit: Number,
+            proposalid: String
+        }],
+        bidschedule: [{
+            csiid: String,
+            quantity: String,
+            unit: String
+        }]
+    },
+    actual: {
+        invoices: [{
+            invoiceid: String,
+            dateinvoice: String,
+            updated: String,
+            approved: String,
+            bid: [{
+                csiid: String,
+                unit: String,
+                quantity: String
+
+            }]
+        }],
+        labor: [{
+
+            laborid: String,
+            userid: String,
+            milestoneid: String,
+            csiid: String,
+            laborrate: Number,
+            timein: String,
+            timeout: String,
+            profit: Number,
+            invoiceid: String
+        }],
+        materials: [{
+            materialid: String,
+            mymaterialid: String,
+            csiid: String,
+            milestoneid: String,
+            timein: String,
+            quantity: String,
+            unit: String,
+            unitcost: Number,
+            profit: Number,
+            invoiceid: String
+        }],
+        equipment: [{
+            equipmentid: String,
+            myequipmentid: String,
+            csiid: String,
+            milestoneid: String,
+            timein: String,
+            timeout: String,
+            equipmentrate: Number,
+            profit: Number,
+            invoiceid: String
+        }],
+        bid: [{
+            csiid: String,
+            quantity: String,
+            unit: String
+        }]
+
+    } // end of actual
+
+})
+
 const projectSchema = ({
-    userid: String,
-    projectid: String,
-    title: String,
-    scope: String,
-    address: String,
-    city: String,
-    projectstate: String,
-    zipcode: String,
+    user_id: String,
+    project_id: String,
     charges: [{
         chargeid: String,
         created: String,
@@ -95,229 +208,111 @@ const projectSchema = ({
         start: String,
         completion: String
     }],
-    construction: [{
-        companyid: String,
-        schedule: {
-            proposals: [{
-                proposalid: String,
-                dateproposal: String,
-                updated: String,
-                approved: String,
-                bidschedule: [{
-                    csiid: String,
-                    unit: String,
-                    quantity: String
 
-                }]
-            }],
+    design: [{
+        company_id: String,
+        costestimate: {
             labor: [{
-                    laborid:String,
-                    userid:String,
-                    milestoneid:String,
-                    csiid:String,
-                    laborrate:Number,
-                    timein:String,
-                    timeout:String,
-                    profit:Number,
-                    proposalid:String
-                }],
-            materials:[{
-                materialid:String,
-                mymaterialid:String,
-                csiid:String,
-                milestoneid:String,
-                timein:String,
-                quantity:String,
-                unit:String,
-                unitcost:Number,
-                profit:Number,
-                proposalid:String
 
-
+                laborid: String,
+                userid: String,
+                milestoneid: String,
+                csiid: String,
+                laborrate: Number,
+                timein: String,
+                timeout: String,
+                profit: Number,
+                invoiceid: String
             }],
-
-            equipment:[{
-                equipmentid:String,
-                myequipmentid:String,
-                csiid:String,
-                milestoneid:String,
-                timein:String,
-                timeout:String,
-                equipmentrate:Number,
-                profit:Number,
-                proposalid:String
+            materials: [{
+                materialid: String,
+                mymaterialid: String,
+                csiid: String,
+                milestoneid: String,
+                timein: String,
+                quantity: String,
+                unit: String,
+                unitcost: Number,
+                profit: Number,
+                invoiceid: String
             }],
-            bidschedule:[{
-                csiid:String,
-                quantity:String,
-                unit:String
+            equipment: [{
+                equipmentid: String,
+                myequipmentid: String,
+                csiid: String,
+                milestoneid: String,
+                timein: String,
+                timeout: String,
+                equipmentrate: Number,
+                profit: Number,
+                invoiceid: String
+            }],
+            bid: [{
+                csiid: String,
+                quantity: String,
+                unit: String
+            }],
+            specifications: [{
+                csiid: String,
+                paragraph: {
+                    listType: String,
+                    list: [{
+                        contentid: String, // part 1 General
+                        content: String,
+                        sublist: {
+                            listType: String,
+                            list: [{
+                                contentid: String, /// 1.01 Measure and Payment
+                                content: String,
+                                sublist: {
+                                    listType: String,
+                                    list: [{
+                                        contentid: String, // A. Lump Sum Price Offered in Schedule
+                                        content: String,
+                                        sublist: {
+                                            listType: String,
+                                            list: [{
+                                                contentid: String, // 1. As determined in the field
+                                                content: String,
+                                                sublist: {
+                                                    listType: String,
+                                                    list: [{
+                                                        contentid: String, // a. otherwise noted
+                                                        content: String,
+                                                        sublist: {
+                                                            listType: String,
+                                                            list: [{
+                                                                contentid: String, // i
+                                                                content: String,
 
+                                                            }]
+                                                        }
 
-            }]
+                                                    }]
+                                                }
 
-        } ,
-        actual: {
-            invoices: [{
-                invoiceid: String,
-                dateinvoice: String,
-                updated: String,
-                approved: String,
-                bid: [{
-                    csiid: String,
-                    unit: String,
-                    quantity: String
+                                            }]
+                                        }
+
+                                    }]
+                                }
+
+                            }]
+                        }
+                    }]
 
                 }
-                ]
-            }],
-            labor: [{
 
-                    laborid:String,
-                    userid:String,
-                    milestoneid:String,
-                    csiid:String,
-                    laborrate:Number,
-                    timein:String,
-                    timeout:String,
-                    profit:Number,
-                    invoiceid:String
-                }],
-            materials:[{
-                materialid:String,
-                mymaterialid:String,
-                csiid:String,
-                milestoneid:String,
-                timein:String,
-                quantity:String,
-                unit:String,
-                unitcost:Number,
-                profit:Number,
-                invoiceid:String
-            }],
-            equipment:[{
-                equipmentid:String,
-                myequipmentid:String,
-                csiid:String,
-                milestoneid:String,
-                timein:String,
-                timeout:String,
-                equipmentrate:Number,
-                profit:Number,
-                invoiceid:String
-            }],
-            bid:[{
-                csiid:String,
-                quantity:String,
-                unit:String
+
             }]
-
-        } // end of actual// end of schedule
-
-
-    }],
-
-    design:[{
-        companyid:String,
-        costestimate:{
-            labor: [{
-
-                laborid:String,
-                userid:String,
-                milestoneid:String,
-                csiid:String,
-                laborrate:Number,
-                timein:String,
-                timeout:String,
-                profit:Number,
-                invoiceid:String
-            }],
-        materials:[{
-            materialid:String,
-            mymaterialid:String,
-            csiid:String,
-            milestoneid:String,
-            timein:String,
-            quantity:String,
-            unit:String,
-            unitcost:Number,
-            profit:Number,
-            invoiceid:String
-        }],
-        equipment:[{
-            equipmentid:String,
-            myequipmentid:String,
-            csiid:String,
-            milestoneid:String,
-            timein:String,
-            timeout:String,
-            equipmentrate:Number,
-            profit:Number,
-            invoiceid:String
-        }],
-        bid:[{
-            csiid:String,
-            quantity:String,
-            unit:String
-        }],
-
-        specifications:[{
-            csiid:String,
-            paragraph: {
-                listType:String,
-                list:[{
-                    contentid:String, // part 1 General
-                    content:String,
-                    sublist:{
-                       listType:String , 
-                       list:[{
-                        contentid:String, /// 1.01 Measure and Payment
-                        content:String,
-                        sublist:{
-                            listType:String ,
-                            list:[{
-                             contentid:String, // A. Lump Sum Price Offered in Schedule
-                             content:String,
-                             sublist:{
-                                listType:String ,
-                                list:[{
-                                        contentid:String, // 1. As determined in the field
-                                        content:String,
-                                        sublist:{
-                                                listType:String ,
-                                                list:[{
-                                                contentid:String, // a. otherwise noted
-                                                content:String, 
-                                                sublist:{
-                                                        listType:String ,
-                                                        list:[{
-                                                        contentid:String, // i
-                                                        content:String,                                                     
-                                     
-                                    }]
-                                 }
-                                     
-                                    }]
-                                 }
-                                 
-                                }]
-                             }
-                             
-                            }]
-                         }
-
-                       }]
-                    }
-                }]
-
-            }
-            
-
-        }]
 
         }
     }] // end of design
-    
+
 }) // end of project schema
+
+const projectsdb = mongoose.model("projects", projectSchema);
+const constructiondb = mongoose.model("construction", constructionSchema)
 
 class CivilEngineer {
 
@@ -326,10 +321,10 @@ class CivilEngineer {
     async fetchUsers() {
         try {
 
-            const dbconnect = await this.dbConnect();
+            //  const dbconnect = await this.dbConnect();
             const request = new sql.Request();
             const response = await request.query('select * from MyUsers')
-            const dbDisconnect = await this.dbDisconnect();
+            //  const dbDisconnect = await this.dbDisconnect();
             return response.recordset;
 
         } catch (err) {
@@ -355,9 +350,140 @@ class CivilEngineer {
 
     }
 
+
+
+    async findAllProjects() {
+        // const db = await this.connectMongoDB();
+        const allprojects = await constructiondb.find({});
+        const close = await this.closeMongoDB();
+        return allprojects;
+
+    }
+
+    async deleteProjectByID(project_id) {
+
+        // const db = await this.connectMongoDB();
+        const deleteproject = await constructiondb.deleteOne({ project_id });
+        const close = await this.closeMongoDB();
+        return deleteproject;
+
+    }
+
+    getCompanyProjectfromProject(myproject, company_id) {
+
+
+        let getmyproject = false;
+        let user_id = "";
+        let project_id = "";
+
+        if (myproject) {
+
+
+            user_id = myproject.user_id;
+            project_id = myproject.project_id;
+
+            if (myproject.construction) {
+                for (let project of myproject.construction) {
+
+                    if (project.company_id === company_id) {
+                        getmyproject = project
+                    }
+
+                }
+
+
+                if (!getmyproject) {
+                    getmyproject = {
+                        user_id,
+                        project_id,
+                        company_id,
+                        schedule: {
+                            proposals: [{
+
+                                bidschedule: [{
+
+                                }]
+                            }],
+                            labor: [],
+                            materials: [],
+
+                            equipment: [],
+                            bidschedule: []
+
+                        },
+                        actual: {
+                            invoices: [{
+
+                                bid: []
+                            }],
+                            labor: [],
+                            materials: [],
+                            equipment: [],
+                            bid: []
+
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        return getmyproject;
+
+    }
+
+    async updateProjectByID(company_id, project_id, myproject) {
+        try {
+
+
+            const options = {
+                strict: false,
+                new: true,
+                upsert: true,
+                useFindAndModify: false
+            }
+            const filter = { project_id }
+         
+
+            const updateproject = await constructiondb.findOneAndUpdate(filter, myproject, options)
+        
+            return updateproject;
+
+        } catch (err) {
+            console.log(`Could not Update Project By ID ${err}`)
+        }
+
+    }
+
+
+
+    async findMyProjectByID( company_id, project_id) {
+
+        //  const db = await this.connectMongoDB();
+        const findproject = await constructiondb.findOne({ company_id, project_id });
+        // const close = await this.closeMongoDB();
+        return findproject;
+
+    }
+
+    async createProject(myproject) {
+        try {
+            //  const db = await this.connectMongoDB();
+            const createproject = await constructiondb.create(myproject);
+            const close = await this.closeMongoDB();
+            return createproject;
+
+        } catch (err) {
+            return ({ Error: `Could not create company ${err} ` })
+        }
+
+
+    }
+
     async createCompany(newcompany) {
         try {
-            const db = await this.connectMongoDB();
+            //  const db = await this.connectMongoDB();
             const getcompany = await companys.create(newcompany);
             const close = await this.closeMongoDB();
             return getcompany;
@@ -385,7 +511,7 @@ class CivilEngineer {
 
         try {
 
-            const dbconnect = await this.connectMongoDB();
+            //  const dbconnect = await this.connectMongoDB();
             const getcompany = await companys.findByIdAndUpdate(filter, company, options)
             const close = await this.closeMongoDB();
             return getcompany;
@@ -400,7 +526,7 @@ class CivilEngineer {
     async removeCompanyByID(company_id) {
         try {
 
-            const db = await this.connectMongoDB();
+            //  const db = await this.connectMongoDB();
             const getcompany = await companys.findByIdAndDelete({ _id: company_id })
             const close = await this.closeMongoDB();
             return getcompany;
@@ -418,7 +544,7 @@ class CivilEngineer {
             let myuser = await this.getUserByID(user_id)
             const companyid = myuser.recordset[0].CompanyID;
             const company = await this.fetchCompanyByID(companyid)
-           
+
             return company;
 
         } catch (err) {
@@ -430,26 +556,26 @@ class CivilEngineer {
     async fetchCompanyByID(company_id) {
         try {
             let allprojects = {};
-            const db = await this.connectMongoDB();
-            const getcompany = await companys.findById({ _id: company_id })
-            const result = await this.getProjectsByCompany.call(this,getcompany._id)
-            if(result.recordset.length>0) {
+            // const db = await this.connectMongoDB();
+            const getcompany = await companys.findById({_id:company_id})
+            const result = await this.getProjectsByCompany.call(this, company_id)
+            if (result.recordset.length > 0) {
                 allprojects = result.recordset;
             }
-            const close = await this.closeMongoDB();
-            return ({company:getcompany,allprojects});
+           // const close = await this.closeMongoDB();
+            return ({ company: getcompany, allprojects });
 
         } catch (err) {
-            return (err)
+            console.log({Error:`Cannot find Company ${company_id} ${err}`})
 
         }
     }
 
     async getCompanyByID(company_id) {
         try {
-            const dbConnect = await this.connectMongoDB();
+            // const dbConnect = await this.connectMongoDB();
             const company = await this.fetchCompanyByID(company_id)
-            const dbDisconnect = await this.closeMongoDB();
+            // const dbDisconnect = await this.closeMongoDB();
             return company;
 
 
@@ -460,9 +586,9 @@ class CivilEngineer {
 
     async getCompanys() {
         try {
-            const dbConnect = await this.connectMongoDB();
+            //  const dbConnect = await this.connectMongoDB();
             const companys = await this.fetchCompanys();
-            const dbDisconnect = await this.closeMongoDB();
+            //  const dbDisconnect = await this.closeMongoDB();
             return companys;
 
 
@@ -473,8 +599,8 @@ class CivilEngineer {
 
     async closeMongoDB() {
         try {
-            let closedb = await mongoose.connection.close()
-            console.log(`Mongo DB connection closed`)
+            //  let closedb = await mongoose.connection.close()
+            //  console.log(`Mongo DB connection closed`)
         } catch (err) {
             console.log(`Error could not close MongoDB ${err}`)
 
@@ -507,6 +633,12 @@ class CivilEngineer {
         }
 
 
+    }
+
+    async closeDBs() {
+
+        await this.closeMongoDB();
+        await this.closedb();
     }
 
     async dbConnect() {
@@ -581,13 +713,13 @@ class CivilEngineer {
     }
 
     async updateUserCompanyID(user_id, company_id) {
-        const connectdb = await this.dbConnect();
+        // const connectdb = await this.dbConnect();
         const request = new sql.Request()
         const mysql = `UPDATE MyUsers SET MyUsers.CompanyID = '${company_id}'
         WHERE (((MyUsers._ID)='${user_id}'))`
         const results = await request.query(mysql)
         const fetchuser = await this.getUserByID(user_id)
-        const disconnect = await this.dbDisconnect();
+        // const disconnect = await this.dbDisconnect();
         return fetchuser;
 
     }
@@ -604,13 +736,13 @@ class CivilEngineer {
             const apple = myuser.apple;
             const userid = myuser.userid;
             const profileurl = myuser.profileurl;
-            const connectdb = await this.dbConnect();
+            // const connectdb = await this.dbConnect();
             const request = new sql.Request()
             const mysql = `UPDATE MyUsers SET MyUsers.FirstName = '${firstname}',  MyUsers.LastName='${lastname}', MyUsers.EmailAddress='${emailaddress}', MyUsers.PhoneNumber='${phonenumber}', MyUsers.Apple='${apple}', MyUsers.UserID='${userid}', MyUsers.ProfileURL='${profileurl}'
             WHERE (((MyUsers._ID)='${myuser._id}'))`
             const results = await request.query(mysql)
             const fetchuser = await this.getUserByID(_id)
-            const disconnect = await this.dbDisconnect();
+            // const disconnect = await this.dbDisconnect();
             return fetchuser;
 
 
@@ -621,23 +753,50 @@ class CivilEngineer {
 
     }
 
+    async getProjectByProjectID(projectid) {
+
+        try {
+
+            //  const dbConnect = await this.dbConnect();
+            const request = new sql.Request();
+            let getproject = false
+            const mysql = `SELECT Projects._ID, Projects.ProjectID, Projects.UserID
+FROM Projects
+WHERE (((Projects.ProjectID)='${projectid}' And (Projects.ProjectID) Is Not Null))`
+
+                ;
+            let results = await request.query(mysql)
+            // const disconnect = await this.dbDisconnect();
+            if (results.recordset) {
+                getproject = results.recordset[0]
+            }
+
+            return getproject;
+
+
+        } catch (err) {
+            console.log(`Error could not fetch projects ${err}`)
+        }
+
+    }
+
     async getProjectsByCompany(companyid) {
 
         try {
 
-            const dbConnect = await this.dbConnect();
+            //  const dbConnect = await this.dbConnect();
             const request = new sql.Request();
-            const mysql = `SELECT Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID
+            const mysql = `SELECT Projects._ID, Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID
 FROM MyUsers INNER JOIN (Projects INNER JOIN MyTeam ON Projects._ID = MyTeam.ProjectID) ON MyUsers._ID = MyTeam.UserID
-GROUP BY Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID
+GROUP BY Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID, Projects._ID
 HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null))`
-           console.log(mysql)
-const results = await request.query(mysql)
-            const disconnect = await this.dbDisconnect();
+
+            const results = await request.query(mysql)
+            // const disconnect = await this.dbDisconnect();
             return results;
 
 
-        } catch(err) {
+        } catch (err) {
             console.log(`Error could not fetch projects ${err}`)
         }
 
@@ -646,11 +805,11 @@ const results = await request.query(mysql)
 
     async getUserByID(_id) {
         try {
-            const dbConnect = await this.dbConnect();
+            // const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `SELECT * FROM MyUsers WHERE (((MyUsers._ID)='${_id}')) AND MyUsers._ID IS NOT NULL`
             const results = await request.query(mysql)
-            const disconnect = await this.dbDisconnect();
+            //  const disconnect = await this.dbDisconnect();
             return results;
 
         } catch (err) {
@@ -686,11 +845,11 @@ const results = await request.query(mysql)
     async deleteUser(_id) {
         try {
 
-            const dbconnect = await this.dbConnect();
+            // const dbconnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `DELETE FROM MyUsers WHERE _ID='${_id}' AND _ID IS NOT NULL`
             const response = await request.query(mysql)
-            const dbDisconnect = await this.dbDisconnect();
+            // const dbDisconnect = await this.dbDisconnect();
             return response
 
         } catch (err) {
@@ -711,12 +870,12 @@ const results = await request.query(mysql)
             const google = this.hashPassword(myuser.google);
             const profileurl = myuser.profileurl;
             const userid = myuser.userid;
-            const dbConnect = await this.dbConnect();
+            //  const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `INSERT INTO MyUsers (_ID, FirstName, LastName, EmailAddress, PhoneNumber, Apple, Google, ProfileURL, UserID) VALUES ('${_id}','${firstname}','${lastname}','${emailaddress}','${phonenumber}','${apple}','${google}','${profileurl}','${userid}')`
             const results = await request.query(mysql)
             const getuser = await this.getUserByID(_id)
-            const disconnect = await this.dbDisconnect();
+            // const disconnect = await this.dbDisconnect();
             return getuser
 
         } catch (err) {
@@ -737,7 +896,7 @@ const results = await request.query(mysql)
 
         try {
 
-            const db = await this.dbConnect();
+            //  const db = await this.dbConnect();
             const request = new sql.Request();
             const results = await request.query('select * from MyUsers')
 
@@ -776,7 +935,7 @@ const results = await request.query(mysql)
                 response = myuser;
 
             }
-            const dbdisconnect = await this.dbDisconnect();
+            //  const dbdisconnect = await this.dbDisconnect();
             return response;
 
 

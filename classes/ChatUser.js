@@ -6,6 +6,7 @@
 const Room = require("./Room");
 const CivilEngineer = require("./civilengineer");
 const CompareCompany = require("./comparecompany");
+const CompareProject = require("./compareproject")
 //const { getRandomJoke } = require("./jokes");
 
 /** ChatUser is a individual connection from client -> server to chat. */
@@ -17,11 +18,13 @@ class ChatUser {
      * @param room {Room} room user will be in
      * */
 
-    constructor(send, roomName) {
+    constructor(send, roomName, company_id) {
         this._send = send; // "send" function for this user
-        this.room = Room.get(roomName); // room user will be in
+        this.room = Room.get(roomName, company_id); // room user will be in
         this.name = null; // becomes the username of the visitor
+        this.company_id = company_id;
 
+        console.log("27", this.company_id)
         console.log(`created chat in ${this.room.name}`);
     }
 
@@ -43,67 +46,15 @@ class ChatUser {
      * @param name {string} name to use in room
      * */
 
-    handleJoin(name) {
-        this.name = name;
-        this.room.join(this);
-        this.room.broadcast({
-            type: "note",
-            text: `${this.name} joined "${this.room.name}".`,
-        });
-    }
+
 
     /** Handle a chat: broadcast to room.
      *
      * @param text {string} message to send
      * */
 
-    async handleCompany(company, company_id) {
-        const civilengineer = new CivilEngineer();
- 
-        try {
 
 
-            const getcompanydb = await civilengineer.fetchCompanyByID(company_id);
-            const companydb = getcompanydb.company;
-            const compare = new CompareCompany(company, companydb)
-            const response = compare.getResponse();
-            civilengineer.updateCompanyByID(companydb._id, company)
-                .then(succ => {
-
-                    this.room.broadcast({
-                        name: this.name,
-                        type: "company",
-                        response,
-                        company:succ
-                    });
-
-
-                })
-                .catch((err) => {
-                    res.send({ Error: `Could not Fetch Company ${err}` })
-
-                })
-
-
-
-
-            // console.log("handle company ",company)
-
-
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    handleChat(msg) {
-        console.log("handle chat ", msg.message)
-        this.room.broadcast({
-            name: this.name,
-            type: "chat",
-            message: msg.message,
-            username: msg.username
-        });
-    }
 
     /** Handle a private chat: send to recipient only.
      *
@@ -111,18 +62,7 @@ class ChatUser {
      * @param text {string} message to send
      * */
 
-    handlePrivateChat(recipient, text) {
-        // get the recipient instance,
-        // so we can send message
-        const member = this.room.getMember(recipient);
 
-        member.send(JSON.stringify(
-            {
-                name: this.name,
-                type: "priv-chat",
-                text: text,
-            }));
-    }
 
     /** Handle messages from client:
      *
@@ -134,50 +74,162 @@ class ChatUser {
      * </code>
      */
 
-   async companyHandler(jsonData, user_id, userid, company_id) {
+
+
+    async projectHandler(jsonData, user_id, userid, company_id, projectid) {
+
+
         const msg = JSON.parse(jsonData);
         const civilengineer = new CivilEngineer();
-        if(msg.type === "join") {
 
-        const getcompany = await civilengineer.fetchCompanyByID(company_id)
-      
-        const company = getcompany.company;
-        this.name = user_id;
-        this.room.join(this);
-        this.room.broadcast({
-       
-            type: "join",
-            text: `${this.name} ${userid} joined "${this.room.name}".${getcompany.company.companyid}`,
-           
-        });
+        const defaultproject = (project_id, company_id) => {
+            return ({
+                project_id,
+                company_id,
+                schedule: {
+                    proposals: [{
 
-    
-                   
+                        bidschedule: [{
 
-        } else if (msg.type==="company") {
-          const company = msg.company;
+                        }]
+                    }],
+                    labor: [],
+                    materials: [],
+
+                    equipment: [],
+                    bidschedule: []
+
+                },
+                actual: {
+                    invoices: [{
+
+                        bid: []
+                    }],
+                    labor: [],
+                    materials: [],
+                    equipment: [],
+                    bid: []
+
+                }
+            })
+
+        }
+
+        const getproject = await civilengineer.getProjectByProjectID(projectid)
+        let project_id = "";
+        if(getproject._ID) {
+         project_id = getproject._ID;
+        }
+
+        
+
+        if (msg.type === "join") {
+
+
+            try {
+
+                const myproject = await civilengineer.findMyProjectByID(company_id, project_id)
+
+                if (!myproject) {
+
+                    myproject = defaultproject(project_id, company_id)
+
+                }
+
+                this.name = userid;
+                this.room.join(this);
+                this.room.broadcast({
+
+                    type: "join",
+                    text: `${this.name} ${userid} joined ${this.room.name}`,
+                    myproject
+                });
+
+
+
+
+            } catch (err) {
+                console.log(`Could not fetch project by id ${err}`)
+            }
+
+
+
+        } else if (msg.type === "construction") {
+
+
+
+            try {
+
+                const myprojectdb = await civilengineer.findMyProjectByID(company_id, project_id)
+                const compareproject = new CompareProject(msg.myproject, myprojectdb)
+                const response = compareproject.getResponse();
+                const updateproject = await civilengineer.updateProjectByID(company_id, project_id, msg.myproject)
+
+                this.name = userid;
+
+                this.room.broadcastCompany({
+                    type: "construction",
+                    text: `${this.name} saved project ${projectid}`,
+                    myproject: updateproject,
+                    company_id,
+                    response
+                });
+
+
+            } catch (err) {
+                console.log(`Error could not save project ${err}`)
+            }
+
+
+
+        }
+
+
+    }
+
+
+    async companyHandler(jsonData, user_id, userid, company_id) {
+        const msg = JSON.parse(jsonData);
+        const civilengineer = new CivilEngineer();
+        if (msg.type === "join") {
+
+            if (company_id) {
+
+                const getcompany = await civilengineer.fetchCompanyByID(company_id)
+
+                if (getcompany) {
+
+                    this.name = user_id;
+                    this.room.join(this);
+                    this.room.broadcast({
+
+                        type: "join",
+                        text: `${this.name} ${userid} joined "${this.room.name}".${getcompany.companyid}`,
+
+                    });
+
+
+                }
+
+
+
+            }
+
+
+
+
+        } else if (msg.type === "company") {
+            const company = msg.company;
             this.handleCompany(company, company_id)
-        
-        
+
+
         }
 
 
 
     }
 
-    handleMessage(jsonData, _id) {
-        let msg = JSON.parse(jsonData);
-        let company = msg.company;
 
-        if (msg.type === "join") this.handleJoin(msg.userid);
-        else if (msg.type === "company") this.handleCompany(company, company_id);
-        else if (msg.type === "chat") this.handleChat(msg);
-        else if (msg.type === "get-joke") this.handleGetJoke();
-        else if (msg.type === "get-members") this.handleGetMembers();
-        else if (msg.type === "change-username") this.handleChangeUsername(msg.text);
-        else if (msg.type === "priv-chat") this.handlePrivateChat(msg.recipient, msg.text);
-        else throw new Error(`bad message: ${msg.type}`);
-    }
 
     /** Connection was closed: leave room, announce exit to others. */
 
@@ -191,15 +243,6 @@ class ChatUser {
 
     /** Handle get joke: get a joke, send to this user only */
 
-    async handleGetJoke() {
-        const joke = 'random joke'
-        this.send(JSON.stringify(
-            {
-                name: "server",
-                type: "chat",
-                text: joke,
-            }));
-    }
 
     /** Handle get room members:
      * - gets all room members
