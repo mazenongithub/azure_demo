@@ -230,6 +230,45 @@ class ChatUser {
     }
 
 
+    async handleCompany(company, company_id) {
+        const civilengineer = new CivilEngineer();
+ 
+        try {
+
+
+            const getcompanydb = await civilengineer.fetchCompanyByID(company_id);
+            const companydb = getcompanydb.company;
+            const compare = new CompareCompany(company, companydb)
+            const response = compare.getResponse();
+            civilengineer.updateCompanyByID(companydb._id, company)
+                .then(succ => {
+
+                    this.room.broadcast({
+                        name: this.name,
+                        type: "company",
+                        response,
+                        company:succ
+                    });
+
+
+                })
+                .catch((err) => {
+                    res.send({ Error: `Could not Fetch Company ${err}` })
+
+                })
+
+
+
+
+            // console.log("handle company ",company)
+
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
 
     /** Connection was closed: leave room, announce exit to others. */
 
