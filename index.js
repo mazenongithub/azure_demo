@@ -1,6 +1,6 @@
 const express = require("express");
 const sql = require('mssql')
-const PORT = 8081;
+
 const keys = require('./keys');
 const mongoose = require("mongoose");
 const session = require('express-session');
@@ -59,9 +59,13 @@ require('./routes/myuser')(app)
 require('./routes/company')(app)
 require('./routes/project')(app)
 
+let PORT = 8081;
+
+if(process.env.port) {
+  PORT = process.env.port
+}
 
 
-
-app.listen(process.env.PORT || PORT, () => {
+app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}`)
 })
