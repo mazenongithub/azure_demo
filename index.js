@@ -61,8 +61,8 @@ require('./routes/project')(app)
 
 let PORT = 8081;
 
-if(process.env.port) {
-  PORT = process.env.port
+if(process.env.PORT) {
+  PORT = process.env.PORT
 }
 
 
