@@ -65,5 +65,5 @@ if(process.env.PORT) {
   PORT = process.env.PORT
 }
 
-
+console.log( `App is listenging to port ${process.env.PORT}`)
 app.listen(process.env.PORT);
