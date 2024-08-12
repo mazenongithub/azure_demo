@@ -544,7 +544,6 @@ class CivilEngineer {
             let myuser = await this.getUserByID(user_id)
             const companyid = myuser.recordset[0].CompanyID;
             const company = await this.fetchCompanyByID(companyid)
-
             return company;
 
         } catch (err) {
@@ -870,12 +869,12 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
             const google = this.hashPassword(myuser.google);
             const profileurl = myuser.profileurl;
             const userid = myuser.userid;
-            //  const dbConnect = await this.dbConnect();
+           // const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `INSERT INTO MyUsers (_ID, FirstName, LastName, EmailAddress, PhoneNumber, Apple, Google, ProfileURL, UserID) VALUES ('${_id}','${firstname}','${lastname}','${emailaddress}','${phonenumber}','${apple}','${google}','${profileurl}','${userid}')`
             const results = await request.query(mysql)
             const getuser = await this.getUserByID(_id)
-            // const disconnect = await this.dbDisconnect();
+          //  const disconnect = await this.dbDisconnect();
             return getuser
 
         } catch (err) {
@@ -896,7 +895,7 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
 
         try {
 
-            //  const db = await this.dbConnect();
+           // const db = await this.dbConnect();
             const request = new sql.Request();
             const results = await request.query('select * from MyUsers')
 
@@ -935,7 +934,7 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
                 response = myuser;
 
             }
-            //  const dbdisconnect = await this.dbDisconnect();
+           // const dbdisconnect = await this.dbDisconnect();
             return response;
 
 

@@ -12,7 +12,7 @@ const CivilEngineer = require('./classes/civilengineer')
 const app = express();
 const civilengineer = new CivilEngineer();
 civilengineer.connectMongoDB();
-civilengineer.dbConnect();
+// civilengineer.dbConnect();
 
 app.use(session({
     secret: keys.SECRETKEY,
@@ -54,7 +54,7 @@ app.get('/', (req,res)=> {
 
 
 
-require('./routes/test')(app);
+
 require('./routes/myuser')(app)
 require('./routes/company')(app)
 require('./routes/project')(app)
