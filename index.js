@@ -8,6 +8,10 @@ const CivilEngineer = require('./classes/civilengineer')
 const app = express();
 const civilengineer = new CivilEngineer();
 civilengineer.connectMongoDB();
+civilengineer.dbConnect()
+.then(succ=> {
+  civilengineer.dbDisconnect()
+})
 
 
 app.use(session({
