@@ -35,6 +35,7 @@ module.exports = app => {
       const _id = req.session.myuser._id;
       const civilengineer = new CivilEngineer();
       const myuser = civilengineer.getUserByID(_id)
+      
          .then((succ) => {
             res.json({ myuser: succ.recordset[0] })
          })

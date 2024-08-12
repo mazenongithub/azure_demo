@@ -5,14 +5,10 @@ const keys = require('./keys');
 const mongoose = require("mongoose");
 const session = require('express-session');
 const CivilEngineer = require('./classes/civilengineer')
-
-
-
-//const checkUser = require('./middleware/checkuser');
 const app = express();
 const civilengineer = new CivilEngineer();
 civilengineer.connectMongoDB();
-// civilengineer.dbConnect();
+
 
 app.use(session({
     secret: keys.SECRETKEY,

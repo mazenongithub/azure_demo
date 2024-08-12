@@ -321,10 +321,10 @@ class CivilEngineer {
     async fetchUsers() {
         try {
 
-            //  const dbconnect = await this.dbConnect();
+            const dbconnect = await this.dbConnect();
             const request = new sql.Request();
             const response = await request.query('select * from MyUsers')
-            //  const dbDisconnect = await this.dbDisconnect();
+            const dbDisconnect = await this.dbDisconnect();
             return response.recordset;
 
         } catch (err) {
@@ -712,13 +712,13 @@ class CivilEngineer {
     }
 
     async updateUserCompanyID(user_id, company_id) {
-        // const connectdb = await this.dbConnect();
+        const connectdb = await this.dbConnect();
         const request = new sql.Request()
         const mysql = `UPDATE MyUsers SET MyUsers.CompanyID = '${company_id}'
         WHERE (((MyUsers._ID)='${user_id}'))`
         const results = await request.query(mysql)
         const fetchuser = await this.getUserByID(user_id)
-        // const disconnect = await this.dbDisconnect();
+        const disconnect = await this.dbDisconnect();
         return fetchuser;
 
     }
@@ -735,13 +735,13 @@ class CivilEngineer {
             const apple = myuser.apple;
             const userid = myuser.userid;
             const profileurl = myuser.profileurl;
-            // const connectdb = await this.dbConnect();
+            const connectdb = await this.dbConnect();
             const request = new sql.Request()
             const mysql = `UPDATE MyUsers SET MyUsers.FirstName = '${firstname}',  MyUsers.LastName='${lastname}', MyUsers.EmailAddress='${emailaddress}', MyUsers.PhoneNumber='${phonenumber}', MyUsers.Apple='${apple}', MyUsers.UserID='${userid}', MyUsers.ProfileURL='${profileurl}'
             WHERE (((MyUsers._ID)='${myuser._id}'))`
             const results = await request.query(mysql)
             const fetchuser = await this.getUserByID(_id)
-            // const disconnect = await this.dbDisconnect();
+            const disconnect = await this.dbDisconnect();
             return fetchuser;
 
 
@@ -756,7 +756,7 @@ class CivilEngineer {
 
         try {
 
-            //  const dbConnect = await this.dbConnect();
+            const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             let getproject = false
             const mysql = `SELECT Projects._ID, Projects.ProjectID, Projects.UserID
@@ -765,7 +765,7 @@ WHERE (((Projects.ProjectID)='${projectid}' And (Projects.ProjectID) Is Not Null
 
                 ;
             let results = await request.query(mysql)
-            // const disconnect = await this.dbDisconnect();
+            const disconnect = await this.dbDisconnect();
             if (results.recordset) {
                 getproject = results.recordset[0]
             }
@@ -783,7 +783,7 @@ WHERE (((Projects.ProjectID)='${projectid}' And (Projects.ProjectID) Is Not Null
 
         try {
 
-            //  const dbConnect = await this.dbConnect();
+            const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `SELECT Projects._ID, Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID
 FROM MyUsers INNER JOIN (Projects INNER JOIN MyTeam ON Projects._ID = MyTeam.ProjectID) ON MyUsers._ID = MyTeam.UserID
@@ -791,7 +791,7 @@ GROUP BY Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNu
 HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null))`
 
             const results = await request.query(mysql)
-            // const disconnect = await this.dbDisconnect();
+            const disconnect = await this.dbDisconnect();
             return results;
 
 
@@ -804,11 +804,11 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
 
     async getUserByID(_id) {
         try {
-            // const dbConnect = await this.dbConnect();
+            const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `SELECT * FROM MyUsers WHERE (((MyUsers._ID)='${_id}')) AND MyUsers._ID IS NOT NULL`
             const results = await request.query(mysql)
-            //  const disconnect = await this.dbDisconnect();
+            const disconnect = await this.dbDisconnect();
             return results;
 
         } catch (err) {
@@ -844,11 +844,11 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
     async deleteUser(_id) {
         try {
 
-            // const dbconnect = await this.dbConnect();
+            const dbconnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `DELETE FROM MyUsers WHERE _ID='${_id}' AND _ID IS NOT NULL`
             const response = await request.query(mysql)
-            // const dbDisconnect = await this.dbDisconnect();
+            const dbDisconnect = await this.dbDisconnect();
             return response
 
         } catch (err) {
@@ -869,12 +869,12 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
             const google = this.hashPassword(myuser.google);
             const profileurl = myuser.profileurl;
             const userid = myuser.userid;
-           // const dbConnect = await this.dbConnect();
+            const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             const mysql = `INSERT INTO MyUsers (_ID, FirstName, LastName, EmailAddress, PhoneNumber, Apple, Google, ProfileURL, UserID) VALUES ('${_id}','${firstname}','${lastname}','${emailaddress}','${phonenumber}','${apple}','${google}','${profileurl}','${userid}')`
             const results = await request.query(mysql)
             const getuser = await this.getUserByID(_id)
-          //  const disconnect = await this.dbDisconnect();
+            const disconnect = await this.dbDisconnect();
             return getuser
 
         } catch (err) {
@@ -895,7 +895,7 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
 
         try {
 
-           // const db = await this.dbConnect();
+            const db = await this.dbConnect();
             const request = new sql.Request();
             const results = await request.query('select * from MyUsers')
 
@@ -934,7 +934,7 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
                 response = myuser;
 
             }
-           // const dbdisconnect = await this.dbDisconnect();
+            const dbdisconnect = await this.dbDisconnect();
             return response;
 
 
