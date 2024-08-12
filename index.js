@@ -9,10 +9,7 @@ const app = express();
 const civilengineer = new CivilEngineer();
 civilengineer.connectMongoDB();
 
-civilengineer.dbConnect()
-.then(succ=> {
-  civilengineer.dbDisconnect()
-})
+
 
 
 
@@ -20,7 +17,7 @@ app.use(session({
     secret: keys.SECRETKEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 8640000, sameSite:'none', secure:true }  
+    cookie: { maxAge: 8640000, sameSite:true, httpOnly:false },  
   }))
 
   const cors = {
