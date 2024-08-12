@@ -46,95 +46,12 @@ app.use(session({
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-
-const ChatUser = require("./classes/ChatUser");
 const wsExpress = require("express-ws")(app);
 
-app.ws("/chat/:roomName", function (ws, req, next) {
-    console.log("websocket running")
-    // setTimeout(()=> {
-    //     ws.send(Math.random())
-    // }, 2000)
-
-    // setTimeout(()=> {
-    //     ws.close()
-    // }, 4000)
-
-    // ws.on("message", function (data) {
-    //     try {
-          
-    //       console.log("message received")
-    //     //   let msg = JSON.parse(data);
-    //      console.log(data)
-   
-    //       ws.send(data)
-    //     } catch (err) {
-    //       console.error(err);
-    //     }
-    //   });
-      
-
-    try {
-        const user = new ChatUser(
-          ws.send.bind(ws), // fn to call to message this user
-          req.params.roomName // name of room for user
-        );
-
-        const userid = Math.random();
-
-        user.handleJoin(userid)
-    
-        // register handlers for message-received, connection-closed
-    
-        ws.on("message", function (data) {
-            try {
-                
-                user.handleMessage(data);
-              } catch (err) {
-                console.error(err);
-              }
-            });
-            
-        
-            ws.on("close", function () {
-              try {
-                user.handleClose();
-              } catch (err) {
-                console.error(err);
-              }
-            });
-          } catch (err) {
-            console.error(err);
-          }
-        
-
-
-   
-
+app.get('/', (req,res)=> {
+  res.send({message:'You are online'})
 })
 
-;
-
-
-
-app.get('/azure', (req, res) => {
-  const civilengineer = new CivilEngineer();
-  const connect =  civilengineer.dbConnect()
-  .then(()=> {
-  
-  const request = new sql.Request();
-  request.query('select * from MyUsers')
-  .then((results)=> {
-    res.json({ response: results.recordset })
-  })
-
-
-
-
-
-})
-
-})
 
 
 require('./routes/test')(app);
