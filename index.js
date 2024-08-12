@@ -59,11 +59,11 @@ require('./routes/myuser')(app)
 require('./routes/company')(app)
 require('./routes/project')(app)
 
-let PORT = 8081;
 
-if(process.env.PORT) {
-  PORT = process.env.PORT
-}
-
-console.log( `App is listenging to port ${process.env.PORT}`)
-app.listen(process.env.PORT);
+app.listen(process.env.PORT || 8081, () => {
+   if(process.env.PORT) {
+    console.log(` App is listening to ${process.env.PORT}`)
+   } else {
+    console.log(` App is listening to 8081`)
+   }
+})
