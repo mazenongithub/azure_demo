@@ -20,7 +20,7 @@ app.use(session({
     secret: keys.SECRETKEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 8640000, sameSite:'None', secure:true },  
+    cookie: { maxAge: 8640000, sameSite:'none', secure:true }  
   }))
 
   const cors = {
