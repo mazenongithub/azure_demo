@@ -1,1 +1,1 @@
-web: ./qgtunnel npm start
+web: bin/qgtunnel npm start
