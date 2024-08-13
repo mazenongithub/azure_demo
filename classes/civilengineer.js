@@ -785,7 +785,7 @@ WHERE (((Projects.ProjectID)='${projectid}' And (Projects.ProjectID) Is Not Null
 
             const dbConnect = await this.dbConnect();
             const request = new sql.Request();
-            const mysql = `SELECT Projects._ID, Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID
+            const mysql = `SELECT Projects._ID, Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID, Projects.Scope
 FROM MyUsers INNER JOIN (Projects INNER JOIN MyTeam ON Projects._ID = MyTeam.ProjectID) ON MyUsers._ID = MyTeam.UserID
 GROUP BY Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID, Projects._ID
 HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null))`

@@ -1,0 +1,6 @@
+
+[qgtunnel.MySQL_Server]
+accept = "127.0.0.1:1433"
+connect = "civilengineer-io.database.windows.net:1433"
+encrypted = false
+transparent = true

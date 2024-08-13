@@ -10,9 +10,6 @@ const civilengineer = new CivilEngineer();
 civilengineer.connectMongoDB();
 
 
-
-
-
 app.use(session({
     secret: keys.SECRETKEY,
     resave: false,

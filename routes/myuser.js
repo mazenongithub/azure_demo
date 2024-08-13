@@ -50,7 +50,7 @@ module.exports = app => {
 
       const { firstname, lastname, emailaddress, phonenumber, profileurl, apple, google, userid } = req.body
       const myuser = { firstname, lastname, emailaddress, phonenumber, profileurl, apple, google, userid }
-
+      console.log(myuser)
       const civilengineer = new CivilEngineer();
       civilengineer.loginUser(myuser)
          .then((succ) => {
