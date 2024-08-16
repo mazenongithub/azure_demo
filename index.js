@@ -54,6 +54,7 @@ app.get('/', (req,res)=> {
 require('./routes/myuser')(app)
 require('./routes/company')(app)
 require('./routes/project')(app)
+require('./routes/pm')(app)
 
 
 app.listen(process.env.PORT || 8081, () => {

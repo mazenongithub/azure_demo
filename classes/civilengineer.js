@@ -625,6 +625,7 @@ class CivilEngineer {
         try {
             let closedb = await sql.close()
             console.log(`db disconnected `)
+            return closedb;
 
         } catch (err) {
             console.log(`Could not close db ${err}`)
