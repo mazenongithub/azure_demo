@@ -19,7 +19,7 @@ module.exports = app => {
         // console.log("myuser", req.session.myuser)
         const user_id = req.session.myuser.userid;
         const company_id = req.params.companyID;
-        const _id = req.session.myuser._id
+        const _id = req.session.myuser.user_id
 
 
 
@@ -71,7 +71,7 @@ module.exports = app => {
 
     app.get('/company/:companyid/updateusercompanyid', checkUser, (req, res) => {
         const civilengineer = new CivilEngineer();
-        const userid = req.session.myuser._id
+        const userid = req.session.myuser.user_id
         const companyid = req.params.companyid;
         civilengineer.updateUserCompanyID(userid, companyid)
             .then((succ) => {
@@ -94,20 +94,20 @@ module.exports = app => {
     })
 
     app.get('/company/findmycompany', checkUser, (req, res) => {
-        // req.session.myuser._id = 'RX28A8I1MA3SRLS4';
-        // const _id = req.session.myuser._id;
+        // req.session.myuser.user_id = 'RX28A8I1MA3SRLS4';
+        // const _id = req.session.myuser.user_id;
         // req.session.myuser = {};
-        // req.session.myuser._id = 'RX28A8I1MA3SRLS4'
+        // req.session.myuser.user_id = 'RX28A8I1MA3SRLS4'
         // req.session.myuser.userid = 'maison'
         // req.session.myuser.companyid ='661d45d677fdcfa48c8e8ed1'
       
         const companyid = req.session.myuser.companyid;
        
         const civilengineer = new CivilEngineer();
-     
+        console.log("107", companyid)
                     civilengineer.fetchCompanyByID(companyid)
                         .then((succ_1) => {
-
+                        console.log("110", succ_1)
 
 
                             res.send({ company:succ_1.company, allprojects:succ_1.allprojects })
@@ -128,7 +128,7 @@ module.exports = app => {
     })
 
     app.post('/company/createcompany', checkUser, (req, res) => {
-        const userid = req.session.myuser._id
+        const userid = req.session.myuser.user_id
         const companyid = req.body.companyid;
 
         const newcompany = (user_id, companyid) => {

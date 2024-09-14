@@ -94,7 +94,7 @@ const constructionSchema  = ({
         }],
         labor: [{
             laborid: String,
-            userid: String,
+            user_id: String,
             milestoneid: String,
             csiid: String,
             laborrate: Number,
@@ -149,9 +149,8 @@ const constructionSchema  = ({
             }]
         }],
         labor: [{
-
             laborid: String,
-            userid: String,
+            user_id: String,
             milestoneid: String,
             csiid: String,
             laborrate: Number,
@@ -193,22 +192,8 @@ const constructionSchema  = ({
 
 })
 
-const projectSchema = ({
-    user_id: String,
-    project_id: String,
-    charges: [{
-        chargeid: String,
-        created: String,
-        amount: String,
 
-    }],
-    milestones: [{
-        milestoneid: String,
-        milestone: String,
-        start: String,
-        completion: String
-    }],
-
+const designSchema = ({
     design: [{
         company_id: String,
         costestimate: {
@@ -308,6 +293,25 @@ const projectSchema = ({
 
         }
     }] // end of design
+})
+
+const projectSchema = ({
+    user_id: String,
+    project_id: String,
+    charges: [{
+        chargeid: String,
+        created: String,
+        amount: String,
+
+    }],
+    milestones: [{
+        milestoneid: String,
+        milestone: String,
+        start: String,
+        completion: String
+    }]
+
+
 
 }) // end of project schema
 
@@ -433,6 +437,17 @@ class CivilEngineer {
 
     }
 
+    async findAllProjectsByID(project_id) {
+        try {
+
+            let construction = await constructiondb.find({project_id})
+            return construction
+
+        } catch(err) {
+            console.log(`Error: Could not find all projects by ID ${err}`)
+        }
+    }
+
     async updateProjectByID(company_id, project_id, myproject) {
         try {
 
@@ -443,7 +458,7 @@ class CivilEngineer {
                 upsert: true,
                 useFindAndModify: false
             }
-            const filter = { project_id }
+            const filter = { project_id, company_id }
          
 
             const updateproject = await constructiondb.findOneAndUpdate(filter, myproject, options)
@@ -513,7 +528,7 @@ class CivilEngineer {
 
             //  const dbconnect = await this.connectMongoDB();
             const getcompany = await companys.findByIdAndUpdate(filter, company, options)
-            const close = await this.closeMongoDB();
+           // const close = await this.closeMongoDB();
             return getcompany;
 
         } catch (err) {
@@ -716,7 +731,7 @@ class CivilEngineer {
         const connectdb = await this.dbConnect();
         const request = new sql.Request()
         const mysql = `UPDATE MyUsers SET MyUsers.CompanyID = '${company_id}'
-        WHERE (((MyUsers._ID)='${user_id}'))`
+        WHERE (((MyUsers.User_ID)='${user_id}'))`
         const results = await request.query(mysql)
         const fetchuser = await this.getUserByID(user_id)
         const disconnect = await this.dbDisconnect();
@@ -739,7 +754,7 @@ class CivilEngineer {
             const connectdb = await this.dbConnect();
             const request = new sql.Request()
             const mysql = `UPDATE MyUsers SET MyUsers.FirstName = '${firstname}',  MyUsers.LastName='${lastname}', MyUsers.EmailAddress='${emailaddress}', MyUsers.PhoneNumber='${phonenumber}', MyUsers.Apple='${apple}', MyUsers.UserID='${userid}', MyUsers.ProfileURL='${profileurl}'
-            WHERE (((MyUsers._ID)='${myuser._id}'))`
+            WHERE (((MyUsers.User_ID)='${myuser._id}'))`
             const results = await request.query(mysql)
             const fetchuser = await this.getUserByID(_id)
             const disconnect = await this.dbDisconnect();
@@ -760,7 +775,7 @@ class CivilEngineer {
             const dbConnect = await this.dbConnect();
             const request = new sql.Request();
             let getproject = false
-            const mysql = `SELECT Projects._ID, Projects.ProjectID, Projects.UserID
+            const mysql = `SELECT Projects.Project_ID, Projects.ProjectID, Projects.User_ID
 FROM Projects
 WHERE (((Projects.ProjectID)='${projectid}' And (Projects.ProjectID) Is Not Null))`
 
@@ -780,16 +795,17 @@ WHERE (((Projects.ProjectID)='${projectid}' And (Projects.ProjectID) Is Not Null
 
     }
 
-    async getProjectsByCompany(companyid) {
+    async getProjectsByCompany(company_id) {
 
         try {
 
             const dbConnect = await this.dbConnect();
             const request = new sql.Request();
-            const mysql = `SELECT Projects._ID, Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID, Projects.Scope
-FROM MyUsers INNER JOIN (Projects INNER JOIN MyTeam ON Projects._ID = MyTeam.ProjectID) ON MyUsers._ID = MyTeam.UserID
-GROUP BY Projects.UserID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode, MyUsers.CompanyID, Projects._ID
-HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null))`
+            const mysql = `SELECT MyUsers.CompanyID, Projects.Project_ID, Projects.User_ID, Projects.ProjectID, Projects.Title, Projects.ProjectNumber, Projects.Address, Projects.City, Projects.ProjectState, Projects.Zipcode
+FROM Projects INNER JOIN (MyUsers INNER JOIN MyTeam ON MyUsers.User_ID = MyTeam.User_ID) ON Projects.Project_ID = MyTeam.Project_ID
+WHERE (((MyUsers.CompanyID)='${company_id}' And (MyUsers.CompanyID) Is Not Null))`
+
+console.log("794", mysql)
 
             const results = await request.query(mysql)
             const disconnect = await this.dbDisconnect();
@@ -807,7 +823,7 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
         try {
             const dbConnect = await this.dbConnect();
             const request = new sql.Request();
-            const mysql = `SELECT * FROM MyUsers WHERE (((MyUsers._ID)='${_id}')) AND MyUsers._ID IS NOT NULL`
+            const mysql = `SELECT * FROM MyUsers WHERE (((MyUsers.User_ID)='${_id}')) AND MyUsers.User_ID IS NOT NULL`
             const results = await request.query(mysql)
             const disconnect = await this.dbDisconnect();
             return results;
@@ -847,7 +863,7 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
 
             const dbconnect = await this.dbConnect();
             const request = new sql.Request();
-            const mysql = `DELETE FROM MyUsers WHERE _ID='${_id}' AND _ID IS NOT NULL`
+            const mysql = `DELETE FROM MyUsers WHERE User_ID='${_id}' AND User_ID IS NOT NULL`
             const response = await request.query(mysql)
             const dbDisconnect = await this.dbDisconnect();
             return response
@@ -872,7 +888,7 @@ HAVING (((MyUsers.CompanyID)='${companyid}' And (MyUsers.CompanyID) Is Not Null)
             const userid = myuser.userid;
             const dbConnect = await this.dbConnect();
             const request = new sql.Request();
-            const mysql = `INSERT INTO MyUsers (_ID, FirstName, LastName, EmailAddress, PhoneNumber, Apple, Google, ProfileURL, UserID) VALUES ('${_id}','${firstname}','${lastname}','${emailaddress}','${phonenumber}','${apple}','${google}','${profileurl}','${userid}')`
+            const mysql = `INSERT INTO MyUsers (User_ID, FirstName, LastName, EmailAddress, PhoneNumber, Apple, Google, ProfileURL, UserID) VALUES ('${_id}','${firstname}','${lastname}','${emailaddress}','${phonenumber}','${apple}','${google}','${profileurl}','${userid}')`
             const results = await request.query(mysql)
             const getuser = await this.getUserByID(_id)
             const disconnect = await this.dbDisconnect();

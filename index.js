@@ -20,6 +20,7 @@ app.use(session({
   const cors = {
     origin: [
         "http://localhost:3000",
+        "http://localhost:3001",
         "http://construction.civilengineer.io"
 
     ]

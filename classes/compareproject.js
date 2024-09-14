@@ -32,7 +32,7 @@ class CompareProject {
         for (let mylabordb of scheduledb.labor) {
 
             let laboriddb = mylabordb.laborid;
-            let useriddb = mylabordb.userid;
+            let user_iddb = mylabordb.user_id;
             let milestoneiddb = mylabordb.milestoneid;
             let csiiddb = mylabordb.csiid;
             let laborratedb = mylabordb.laborrate;
@@ -45,7 +45,7 @@ class CompareProject {
             for (let mylabor of schedule.labor) {
 
                 let laborid = mylabor.laborid;
-                let userid = mylabor.userid;
+                let user_id = mylabor.user_id;
                 let milestoneid = mylabor.milestoneid;
                 let csiid = mylabor.csiid;
                 let laborrate = mylabor.laborrate;
@@ -57,8 +57,8 @@ class CompareProject {
                 if (laborid === laboriddb) {
                     deletelabor = false;
 
-                    if (userid != useriddb || milestoneid != milestoneiddb || csiid != csiiddb || laborrate != laborratedb || timein != timeindb || timeout != timeoutdb || profit != profitdb || proposalid != proposaliddb) {
-                        this.response.schedule.update.push({ laborid, userid, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
+                    if (user_id != user_iddb || milestoneid != milestoneiddb || csiid != csiiddb || laborrate != laborratedb || timein != timeindb || timeout != timeoutdb || profit != profitdb || proposalid != proposaliddb) {
+                        this.response.schedule.update.push({ laborid, user_id, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
                     }
 
 
@@ -81,7 +81,7 @@ class CompareProject {
         for (let mylabor of schedule.labor) {
 
             let laborid = mylabor.laborid;
-            let userid = mylabor.userid;
+            let user_id = mylabor.user_id;
             let milestoneid = mylabor.milestoneid;
             let csiid = mylabor.csiid;
             let laborrate = mylabor.laborrate;
@@ -104,7 +104,7 @@ class CompareProject {
             }
 
             if (insertlabor) {
-                this.response.schedule.insert.push({ laborid, userid, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
+                this.response.schedule.insert.push({ laborid, user_id, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
             }
 
         } // end of insert schedule labor
@@ -349,7 +349,7 @@ class CompareProject {
         for (let mylabordb of actualdb.labor) {
     
             let laboriddb = mylabordb.laborid;
-            let useriddb = mylabordb.userid;
+            let user_iddb = mylabordb.user_id;
             let milestoneiddb = mylabordb.milestoneid;
             let csiiddb = mylabordb.csiid;
             let laborratedb = mylabordb.laborrate;
@@ -362,7 +362,7 @@ class CompareProject {
             for (let mylabor of actual.labor) {
     
                 let laborid = mylabor.laborid;
-                let userid = mylabor.userid;
+                let user_id = mylabor.user_id;
                 let milestoneid = mylabor.milestoneid;
                 let csiid = mylabor.csiid;
                 let laborrate = mylabor.laborrate;
@@ -374,8 +374,8 @@ class CompareProject {
                 if (laborid === laboriddb) {
                     deletelabor = false;
     
-                    if (userid != useriddb || milestoneid != milestoneiddb || csiid != csiiddb || laborrate != laborratedb || timein != timeindb || timeout != timeoutdb || profit != profitdb || proposalid != proposaliddb) {
-                        this.response.actual.update.push({ laborid, userid, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
+                    if (user_id != user_iddb || milestoneid != milestoneiddb || csiid != csiiddb || laborrate != laborratedb || timein != timeindb || timeout != timeoutdb || profit != profitdb || proposalid != proposaliddb) {
+                        this.response.actual.update.push({ laborid, user_id, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
                     }
     
     
@@ -398,7 +398,7 @@ class CompareProject {
         for (let mylabor of actual.labor) {
     
             let laborid = mylabor.laborid;
-            let userid = mylabor.userid;
+            let user_id = mylabor.user_id;
             let milestoneid = mylabor.milestoneid;
             let csiid = mylabor.csiid;
             let laborrate = mylabor.laborrate;
@@ -421,7 +421,7 @@ class CompareProject {
             }
     
             if (insertlabor) {
-                this.response.actual.insert.push({ laborid, userid, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
+                this.response.actual.insert.push({ laborid, user_id, milestoneid, csiid, laborrate, timein, timeout, profit, proposalid })
             }
     
         } // end of insert actual labor

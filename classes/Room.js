@@ -87,7 +87,7 @@ class Room {
 
                 if (data.myproject.company_id === this.company_id) {
 
-                    console.log("89", data.myproject.company_id, this.company_id)
+                  
                     member.send(JSON.stringify(data));
 
                 }

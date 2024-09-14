@@ -1,8 +1,6 @@
-const sql = require('mssql')
-const bcrypt = require('bcryptjs');
 const CivilEngineer = require('../classes/civilengineer');
 const checkUser = require('../middleware/checkuser');
-const { response } = require('express');
+
 module.exports = app => {
 
    app.get('/myuser/showallusers',  (req, res) => {
@@ -10,7 +8,7 @@ module.exports = app => {
       civilengineer.fetchUsers()
          .then((succ) => {
 
-            res.send(succ)
+            res.send({allusers:succ})
 
          })
          .catch((err) => {
@@ -32,17 +30,17 @@ module.exports = app => {
       // req.session.myuser._id = 'RX28A8I1MA3SRLS4'
       // req.session.myuser.userid = 'maison'
       // req.session.myuser.companyid ='661d45d677fdcfa48c8e8ed1'
-      const _id = req.session.myuser._id;
+      const user_id = req.session.myuser.user_id;
       const civilengineer = new CivilEngineer();
-      const myuser = civilengineer.getUserByID(_id)
+      const myuser = civilengineer.getUserByID(user_id)
       
          .then((succ) => {
-            res.json({ myuser: succ.recordset[0] })
+            res.send({ myuser: succ.recordset[0] })
          })
 
          .catch((err) => {
             let message = `Could not fetch user by ID ${err}`
-            res.json({ Error: message })
+            res.send({ Error: message })
          })
 
    })
@@ -50,14 +48,13 @@ module.exports = app => {
 
       const { firstname, lastname, emailaddress, phonenumber, profileurl, apple, google, userid } = req.body
       const myuser = { firstname, lastname, emailaddress, phonenumber, profileurl, apple, google, userid }
-      console.log(myuser)
       const civilengineer = new CivilEngineer();
       civilengineer.loginUser(myuser)
          .then((succ) => {
 
             if (succ) {
 
-               req.session.myuser = { _id: succ._ID, userid:succ.UserID, companyid:succ.CompanyID }
+               req.session.myuser = { user_id: succ.User_ID, userid:succ.UserID, companyid:succ.CompanyID }
                res.send({ myuser: succ })
 
             } else if (myuser.userid && (myuser.apple || myuser.google)) {
@@ -69,7 +66,7 @@ module.exports = app => {
 
                         const getuser = succ_1.recordset[0]
 
-                        req.session.myuser = { _id: getuser._ID, userid:getuser.UserID }
+                        req.session.myuser = { user_id: getuser.User_ID, userid:getuser.UserID, companyid:getuser.CompanyID  }
                         res.send({ myuser: getuser })
                         
 
@@ -134,14 +131,13 @@ module.exports = app => {
 
       // save update myuser
 
-
-
    })
 
+
    app.get('/myuser/deleteuser/:userid', checkUser, (req, res) => {
-      let _id = req.params.userid;
+      let user_id = req.params.userid;
       const civilengineer = new CivilEngineer();
-       civilengineer.deleteUser(_id)
+       civilengineer.deleteUser(user_id)
          .then((succ) => {
             res.send(succ)
 
@@ -151,7 +147,6 @@ module.exports = app => {
             res.send({ Error: `Could not Delete User ${err} ` })
 
          })
-
 
 
    })

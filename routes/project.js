@@ -11,9 +11,9 @@ module.exports = app => {
         // req.session.myuser.companyid ='661d45d677fdcfa48c8e8ed1'
 
         // console.log("myuser", req.session.myuser)
-        const user_id = req.session.myuser.userid;
+        const userid = req.session.myuser.userid;
         const projectid = req.params.projectid;
-        const _id = req.session.myuser._id
+        const user_id = req.session.myuser.user_id
         const company_id = req.session.myuser.companyid;
        
    
@@ -36,8 +36,10 @@ module.exports = app => {
                     // compare saved company to data
 
                     // save company
+
+                  
                    
-                    user.projectHandler(jsonData, _id, user_id, company_id, projectid)
+                    user.projectHandler(jsonData, user_id, userid, company_id, projectid)
 
 
                 } catch (err) {

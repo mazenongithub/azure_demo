@@ -5,6 +5,7 @@
 // Room is an abstraction of a chat channel
 const Room = require("./Room");
 const CivilEngineer = require("./civilengineer");
+const MyProjects = require("./myprojects")
 const CompareCompany = require("./comparecompany");
 const CompareProject = require("./compareproject")
 //const { getRandomJoke } = require("./jokes");
@@ -24,7 +25,6 @@ class ChatUser {
         this.name = null; // becomes the username of the visitor
         this.company_id = company_id;
 
-        console.log("27", this.company_id)
         console.log(`created chat in ${this.room.name}`);
     }
 
@@ -81,107 +81,481 @@ class ChatUser {
 
         const msg = JSON.parse(jsonData);
         const civilengineer = new CivilEngineer();
-
-        const defaultproject = (project_id, company_id) => {
-            return ({
-                project_id,
-                company_id,
-                schedule: {
-                    proposals: [{
-
-                        bidschedule: [{
-
-                        }]
-                    }],
-                    labor: [],
-                    materials: [],
-
-                    equipment: [],
-                    bidschedule: []
-
-                },
-                actual: {
-                    invoices: [{
-
-                        bid: []
-                    }],
-                    labor: [],
-                    materials: [],
-                    equipment: [],
-                    bid: []
-
-                }
-            })
-
-        }
-
-        const getproject = await civilengineer.getProjectByProjectID(projectid)
-        let project_id = "";
-        if(getproject._ID) {
-         project_id = getproject._ID;
-        }
-
-        
-
-        if (msg.type === "join") {
+        try {
 
 
-            try {
-
-                const myproject = await civilengineer.findMyProjectByID(company_id, project_id)
-
-                if (!myproject) {
-
-                    myproject = defaultproject(project_id, company_id)
-
-                }
-
-                this.name = userid;
-                this.room.join(this);
-                this.room.broadcast({
-
-                    type: "join",
-                    text: `${this.name} ${userid} joined ${this.room.name}`,
-                    myproject
-                });
-
-
-
-
-            } catch (err) {
-                console.log(`Could not fetch project by id ${err}`)
+            let getproject = await civilengineer.getProjectByProjectID(projectid)
+            let project_id = "";
+            if (getproject.Project_ID) {
+                project_id = getproject.Project_ID;
             }
 
 
 
-        } else if (msg.type === "construction") {
+
+            if (msg.type === "join") {
+
+
+                if (msg.application === "pm") {
+
+                    const mydefaultproject = (myproject, team, construction) => {
+                        let milestones = [];
+                        
+                        if (myproject) {
+                            if (myproject.milestones) {
+                                milestones = myproject.milestones
+                            }
+
+                        }
+
+                        if (!team) {
+                            team = [];
+                        }
+
+
+                        if (!construction) {
+                            construction = []
+                        }
+
+
+                        return ({
+                            project_id,
+                            milestones,
+                            team,
+                            construction
+                        })
+
+                    }
+
+
+                    try {
+
+
+                        let MYPROJECTS = new MyProjects(user_id);
+                        let myproject = await MYPROJECTS.findProjectByID(project_id)
+                        let construction = await civilengineer.findAllProjectsByID(project_id)
+                        let dbconnect = await civilengineer.dbConnect();
+                        let team = await MYPROJECTS.loadProjectTeamDB(project_id)
+                        const getproject = mydefaultproject(myproject, team, construction)
+                        let dbdisconnect = await civilengineer.dbDisconnect();
+
+
+                        this.name = userid;
+                        this.room.join(this);
+
+                        this.room.broadcast({
+
+                            type: "join",
+                            text: `${this.name} ${userid} joined ${this.room.name}`,
+                            myproject: getproject,
+                            application:"pm"
+
+                        });
+
+
+                    } catch (err) {
+                        console.log(`Error: Could not Join PM ${err}`)
+                    }
 
 
 
-            try {
+                    // end of join pm
+                } else {
 
-                const myprojectdb = await civilengineer.findMyProjectByID(company_id, project_id)
-                const compareproject = new CompareProject(msg.myproject, myprojectdb)
-                const response = compareproject.getResponse();
-                const updateproject = await civilengineer.updateProjectByID(company_id, project_id, msg.myproject)
-
-                this.name = userid;
-
-                this.room.broadcastCompany({
-                    type: "construction",
-                    text: `${this.name} saved project ${projectid}`,
-                    myproject: updateproject,
-                    company_id,
-                    response
-                });
+                    // construction
 
 
-            } catch (err) {
-                console.log(`Error could not save project ${err}`)
+                    const defaultproject = (project_id, company_id, myproject, pm, team) => {
+
+                        const getteam = (team) => {
+                            if (team) {
+                                return team
+                            } else {
+                                return [];
+                            }
+                        }
+
+                        const getproposals = (myproject) => {
+                            if (myproject) {
+                                if (myproject.schedule) {
+                                    if (myproject.schedule.proposals) {
+                                        return myproject.schedule.proposals;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+                        }
+
+                        const schedulelabor = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.schedule) {
+                                    if (myproject.schedule.labor) {
+                                        return myproject.schedule.labor;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+
+                        const schedulematerials = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.schedule) {
+                                    if (myproject.schedule.materials) {
+                                        return myproject.schedule.materials;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+
+                        const scheduleequipment = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.schedule) {
+                                    if (myproject.schedule.equipment) {
+                                        return myproject.schedule.equipment;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+                        const bidschedule = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.schedule) {
+                                    if (myproject.schedule.bidschedule) {
+                                        return myproject.schedule.bidschedule
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+                        const getmilestones = (pm) => {
+                            if (pm) {
+
+                                if (pm.milestones) {
+
+                                    return pm.milestones
+                                } else {
+                                    return ([])
+                                }
+
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+
+                        const getinvoices = (myproject) => {
+                            if (myproject) {
+                                if (myproject.actual) {
+                                    if (myproject.actual.invoices) {
+                                        return myproject.actual.invoices;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+                        }
+
+                        const actuallabor = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.actual) {
+                                    if (myproject.actual.labor) {
+                                        return myproject.actual.labor;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+
+                        const actualmaterials = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.actual) {
+                                    if (myproject.actual.materials) {
+                                        return myproject.actual.materials;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+
+                        const actualequipment = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.actual) {
+                                    if (myproject.actual.equipment) {
+                                        return myproject.actual.equipment;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+                        const bid = (myproject) => {
+
+                            if (myproject) {
+                                if (myproject.actual) {
+                                    if (myproject.actual.bid) {
+                                        return myproject.actual.bid;
+                                    } else {
+                                        return ([])
+                                    }
+                                } else {
+                                    return ([])
+                                }
+                            } else {
+                                return ([])
+                            }
+
+                        }
+
+
+                        return ({
+                            project_id,
+                            company_id,
+                            schedule: {
+
+                                proposals: getproposals(myproject),
+                                labor: schedulelabor(myproject),
+                                materials: schedulematerials(myproject),
+                                equipment: scheduleequipment(myproject),
+                                bidschedule: bidschedule(myproject),
+
+                            },
+                            actual: {
+                                invoices: getinvoices(myproject),
+                                labor: actuallabor(myproject),
+                                materials: actualmaterials(myproject),
+                                equipment: actualequipment(myproject),
+                                bid: bid(myproject)
+
+                            },
+                            milestones: getmilestones(pm),
+                            team: getteam(team)
+                        })
+
+                    }
+
+
+
+                    try {
+
+
+                        let myproject = await civilengineer.findMyProjectByID(company_id, project_id);
+                        let MYPROJECTS = new MyProjects(user_id);
+                        let pm = await MYPROJECTS.findProjectByID(project_id)
+                        let dbconnect = await civilengineer.dbConnect();
+                        let team = await MYPROJECTS.loadProjectTeamDB(project_id)
+                        let dbdisconnect = await civilengineer.dbDisconnect();
+
+                        myproject = defaultproject(project_id, company_id, myproject, pm, team)
+                        this.name = userid;
+                        this.room.join(this);
+                        this.room.broadcast({
+
+                            type: "join",
+                            text: `${this.name} ${userid} joined ${this.room.name}`,
+                            myproject,
+                            application: "construction"
+                        });
+
+
+
+
+                    } catch (err) {
+                        console.log(`Could not fetch project by id ${err}`)
+                    }
+
+
+                } // end of join construction
+
+
+
+            } else if (msg.type === "construction") {
+                //  start of construction
+
+
+                try {
+
+                    const updateProject = (company_id, project_id, myproject) => {
+
+                        const schedule = (myproject) => {
+
+                            if (myproject) {
+                                return myproject.schedule
+                            } else {
+                                return {}
+                            }
+
+                        }
+
+                        const actual = (myproject) => {
+                            if (myproject) {
+                                return myproject.actual
+                            } else {
+                                return {}
+                            }
+                        }
+
+                        return ({
+                            company_id,
+                            project_id,
+                            schedule: schedule(myproject),
+                            actual: actual(myproject)
+                        })
+
+                    }
+
+
+                    const myprojectdb = await civilengineer.findMyProjectByID(company_id, project_id)
+                    const compareproject = new CompareProject(msg.myproject, myprojectdb)
+                    const response = compareproject.getResponse();
+
+                    const updateproject = await civilengineer.updateProjectByID(company_id, project_id, updateProject(company_id, project_id, msg.myproject))
+
+                    this.name = userid;
+
+                    this.room.broadcast({
+                        type: "construction",
+                        text: `${this.name} saved project ${projectid}`,
+                        myproject: updateproject,
+                        company_id,
+                        response
+                    });
+
+
+                } catch (err) {
+                    console.log(`Error could not save project ${err}`)
+                }
+
+
+
+            } else if (msg.type === "pm") {
+
+                const createProject = (myproject) => {
+                    return ({
+                        project_id: myproject.project_id,
+                        milestones: myproject.milestones
+
+                    })
+                }
+
+                const createProjectResponse = (myproject, team) => {
+                    return ({
+                        project_id: myproject.project_id,
+                        milestones: myproject.milestones,
+                        team
+                    })
+
+                }
+
+
+
+
+                try {
+
+                    let project = msg.project;
+                    let createproject = createProject(project)
+                    let MYPROJECTS = new MyProjects(user_id);
+
+                    let myprojectdb = await MYPROJECTS.updateProjectByID(project_id, createproject)
+                    let response = await MYPROJECTS.handleProjectTeam(project_id, project.team)
+                    const team = response.myteam
+                    const projectresponse = createProjectResponse(myprojectdb, team)
+                    this.name = userid;
+                    this.room.broadcast({
+                        type: "pm",
+                        text: `${this.name} saved project ${projectid}`,
+                        myproject: projectresponse
+                    })
+
+                } catch (err) {
+
+                    console.log(`Error could not update Project ID ${project_id} ${err} `)
+
+                }
+
+
+
+                // load project db
+
+                // compare with project
+
+                // update team 
+
+                // save milestones
+
+
+
+
             }
 
 
-
+        } catch (err) {
+            console.log(`Could not fetch project by id ${err}`)
         }
 
 
@@ -232,7 +606,7 @@ class ChatUser {
 
     async handleCompany(company, company_id) {
         const civilengineer = new CivilEngineer();
- 
+
         try {
 
 
@@ -247,7 +621,7 @@ class ChatUser {
                         name: this.name,
                         type: "company",
                         response,
-                        company:succ
+                        company: succ
                     });
 
 
